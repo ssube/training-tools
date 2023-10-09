@@ -65,6 +65,7 @@ def parse_args():
   parser.add_argument("--remove", type=str, nargs="*", default=[])
   parser.add_argument("--replace", type=str, nargs="*", default=[])
   parser.add_argument("--sort", action="store_true")
+  parser.add_argument("--dry-run", action="store_true")
 
   return parser.parse_args()
 
@@ -83,7 +84,8 @@ def load_captions(root: str, extension: str) -> CaptionSet:
 
 def save_captions(root: str, extension: str, captions: CaptionSet):
   for name, tags in captions.items():
-    with open(path.join(root, f"{name}.{extension}"), "w") as f:
+    prefix, _ext = path.splitext(name)
+    with open(path.join(root, f"{prefix}.{extension}"), "w") as f:
       f.write(", ".join(tags))
 
 
@@ -101,8 +103,11 @@ def main():
   for tag in args.remove:
     remove_tag(captions, tag)
 
-  # count_tags(captions)
+  count_tags(captions)
   stat_tags(captions)
+
+  if not args.dry_run:
+    save_captions(args.path, args.ext, captions)
 
 
 if __name__ == "__main__":
