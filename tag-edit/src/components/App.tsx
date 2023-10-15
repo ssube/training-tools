@@ -122,7 +122,9 @@ export async function saveDirectory(images: Images): Promise<boolean> {
     const file = await handle.getFileHandle(captionName, {
       create: true,
     });
-    const writer = await file.createWritable({});
+    const writer = await file.createWritable({
+      keepExistingData: false,
+    });
     await writer.write(caption);
     await writer.close();
   }

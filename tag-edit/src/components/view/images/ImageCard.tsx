@@ -1,10 +1,10 @@
-import { doesExist, mustExist } from '@apextoaster/js-utils';
+import { Maybe, doesExist, mustExist } from '@apextoaster/js-utils';
 import { Box, Button, Card, CardActions, CardContent, CardMedia, Typography } from '@mui/material';
 import React, { useContext, useMemo } from 'react';
 import { useDrop } from 'react-dnd';
 import { useStore } from 'zustand';
 
-import { StateContext } from '../../../state.js';
+import { ImageCaption, StateContext } from '../../../state.js';
 import { DRAG_TYPES } from '../../drag.js';
 import { DragTag, DragTagProps } from './DragTag.js';
 
@@ -15,21 +15,25 @@ export interface ImageCardProps {
 export function ImageCard(props: ImageCardProps) {
   const state = useContext(StateContext);
   const banned = useStore(mustExist(state), (s) => s.tags.banned);
-  const image = useStore(mustExist(state), (s) => s.images[props.name]);
+  const image: Maybe<ImageCaption> = useStore(mustExist(state), (s) => s.images[props.name]);
 
   const setCaptions = useStore(mustExist(state), (s) => s.setCaptions);
 
   function addTag(tag: DragTagProps) {
     console.log('adding dropped tag', tag);
-    setCaptions(props.name, dedupe([
-      ...image.captions,
-      tag.value,
-    ]));
+    if (doesExist(image)) {
+      setCaptions(props.name, dedupe([
+        ...image.captions,
+        tag.value,
+      ]));
+    }
   }
 
   function removeTag(tag: DragTagProps) {
     console.log('remove dropped tag', tag);
-    setCaptions(props.name, image.captions.filter(it => it !== tag.value));
+    if (doesExist(image)) {
+      setCaptions(props.name, image.captions.filter(it => it !== tag.value));
+    }
   }
 
   const [, drop] = useDrop(
@@ -37,19 +41,19 @@ export function ImageCard(props: ImageCardProps) {
       accept: DRAG_TYPES.Tag,
       drop: addTag,
     }),
-    [image.captions],
+    [image?.captions],
   );
 
-  const url = useMemo(() => URL.createObjectURL(mustExist(image.image)), [mustExist(image.image).name]);
+  const url = useMemo(() => URL.createObjectURL(image?.image || new Blob()), [image?.image?.name]);
 
-  const tags = image.captions.map(tag => <DragTag banned={banned.includes(tag)} label={tag} value={tag} onDelete={removeTag} />);
+  const tags = image?.captions.map(tag => <DragTag banned={banned.includes(tag)} label={tag} value={tag} onDelete={removeTag} />) || [];
 
   return <Card ref={drop} sx={{ maxWidth: 500 }}>
-    {doesExist(image.image) && <CardMedia
+    <CardMedia
       sx={{ height: 250 }}
       image={url}
       title={props.name}
-    />}
+    />
     <CardContent>
       <Box>
         <Typography gutterBottom variant='h5' component='div'>
