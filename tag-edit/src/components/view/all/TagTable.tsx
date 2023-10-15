@@ -7,7 +7,11 @@ export function TagTable() {
   const state = useContext(StateContext);
   const images = useStore(mustExist(state), (s) => s.images);
   const stats = tagStats(images);
-  const rows = Object.entries(stats.count).map(([name, count])=> <tr><td>{name}: {count} ({count / stats.total})</td></tr>);
+  const rows = Object.entries(stats.count)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, count]) => <tr>
+      <td>{name}: {count} ({(count * 100 / stats.total).toFixed(2)}%)</td>
+    </tr>);
 
   return <table>
     <tbody>
