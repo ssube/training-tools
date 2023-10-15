@@ -10,10 +10,10 @@ import { TagPalette } from './TagPalette.js';
 
 export function ImageTab() {
   const state = useContext(StateContext);
-  const captions = useStore(mustExist(state), (s) => s.captions);
+  const images = useStore(mustExist(state), (s) => s.images);
 
   /* for each image in the directory, show a card */
-  const cards = Object.entries(captions).map(([name, tags]) => <Grid item><ImageCard name={name} tags={tags} /></Grid>);
+  const cards = Object.entries(images).map(([name, value]) => <Grid item><ImageCard name={name} tags={value.captions} image={value.image} /></Grid>);
 
   return <DndProvider backend={HTML5Backend}>
     <Stack direction='row'>

@@ -1,20 +1,19 @@
 import { Box, Button, Card, CardActions, CardContent, CardMedia, Typography } from '@mui/material';
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { DragTag, DragTagProps } from './DragTag';
 import { DRAG_TYPES } from '../../drag';
 import { useDrop } from 'react-dnd';
 import { useStore } from 'zustand';
-import { mustExist } from '@apextoaster/js-utils';
+import { doesExist, mustExist } from '@apextoaster/js-utils';
 import { StateContext } from '../../../state.js';
 
 export interface ImageCardProps {
+  image?: File;
   name: string;
   tags: Array<string>;
 }
 
 export function ImageCard(props: ImageCardProps) {
-  const imageFile = `file://${props.name}`;
-
   const state = useContext(StateContext);
   const setCaptions = useStore(mustExist(state), (s) => s.setCaptions);
 
@@ -39,27 +38,29 @@ export function ImageCard(props: ImageCardProps) {
     [props.tags],
   );
 
+  const url = useMemo(() => URL.createObjectURL(mustExist(props.image)), [mustExist(props.image).name]);
+
   const tags = props.tags.map(tag => <DragTag label={tag} value={tag} onDelete={removeTag} />);
 
-  return <Card sx={{ maxWidth: 345 }}>
-    <CardMedia
+  return <Card ref={drop} sx={{ maxWidth: 345 }}>
+    {doesExist(props.image) && <CardMedia
       sx={{ height: 140 }}
-      image={imageFile}
+      image={url}
       title={props.name}
-    />
+    />}
     <CardContent>
       <Box>
-        <Typography gutterBottom variant="h5" component="div">
+        <Typography gutterBottom variant='h5' component='div'>
           {props.name}
         </Typography>
       </Box>
-      <Box ref={drop}>
+      <Box>
         {...tags}
       </Box>
     </CardContent>
     <CardActions>
-      <Button size="small">Share</Button>
-      <Button size="small">Learn More</Button>
+      <Button size='small'>Share</Button>
+      <Button size='small'>Learn More</Button>
     </CardActions>
   </Card>;
 }

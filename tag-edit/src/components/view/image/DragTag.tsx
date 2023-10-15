@@ -21,11 +21,11 @@ export function DragTag(props: DragTagProps) {
   return <Box>
     <Button ref={drag}>{props.label}</Button>
     {doesExist(props.onDelete) &&
-    <IconButton aria-label="delete" size="small" onClick={() => {
+    <IconButton aria-label='delete' size='small' onClick={() => {
       if (doesExist(props.onDelete)) {
           props.onDelete(props);
       }}}>
-      <Delete fontSize="inherit" />
+      <Delete fontSize='inherit' />
     </IconButton>}
   </Box>;
 }

@@ -8,32 +8,63 @@ import { StoreApi, StateCreator } from 'zustand';
  */
 export type Slice<T> = StateCreator<AppState, [], [], T>;
 
-export interface AppState {
-  root: string;
-  captions: {
-    [key: string]: Array<string>;
+export interface Images {
+  [key: string]: {
+    captions: Array<string>;
+    image?: File;
   };
+}
+
+export interface AppState {
+  dirty: boolean;
+  images: Images;
+  tags: Array<string>;
+
+  loadImages(images: Images): void;
 
   setCaptions(name: string, tags: Array<string>): void;
+  setDirty(dirty?: boolean): void;
+  setTags(tags: Array<string>): void;
 }
 
 export function createStateSlices() {
   const appSlice: Slice<AppState> = (set) => ({
-    root: '',
-    captions: {
-      foo: ['foo', 'bar'],
-      bar: ['bar', 'baz'],
+    dirty: false,
+    images: {},
+    tags: [],
+    loadImages(images) {
+      set((prev) => ({
+        ...prev,
+        images,
+      }));
     },
-    setCaptions(name, tags) {
+    setCaptions(name, captions) {
       set((prev) => {
+        const image = prev.images[name].image;
         return {
           ...prev,
-          captions: {
-            ...prev.captions,
-            [name]: tags,
+          images: {
+            ...prev.images,
+            [name]: {
+              captions,
+              image,
+            },
           },
+          dirty: true,
         };
       });
+    },
+    setDirty(dirty = true) {
+      set((prev) => ({
+        ...prev,
+        dirty,
+      }));
+    },
+    setTags(tags) {
+      set((prev) => ({
+        ...prev,
+        tags,
+      }));
     },
   });
 

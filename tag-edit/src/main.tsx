@@ -31,6 +31,12 @@ export async function renderApp(logger: Logger) {
   }), {
     name: STATE_KEY,
     storage: createJSONStorage(() => localStorage),
+    partialize(state) {
+      return {
+        ...state,
+        images: {},
+      };
+    },
     version: STATE_VERSION,
   }));
 

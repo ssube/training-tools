@@ -726,6 +726,11 @@
   resolved "https://registry.yarnpkg.com/@types/sinonjs__fake-timers/-/sinonjs__fake-timers-8.1.3.tgz#575789c5cf6d410cb288b0b4affaf7e6da44ca51"
   integrity sha512-4g+2YyWe0Ve+LBh+WUm1697PD0Kdi6coG1eU0YjQbwx61AZ8XbEpL1zIT6WjuUKrCMCROpEaYQPDjBnDouBVAQ==
 
+"@types/wicg-file-system-access@^2023.10.1":
+  version "2023.10.1"
+  resolved "https://registry.yarnpkg.com/@types/wicg-file-system-access/-/wicg-file-system-access-2023.10.1.tgz#801b45072864471b1fca329cba67f3ba82bdccb2"
+  integrity sha512-oOOUU1CpbbqYI9xt71oKzFO00CbAZ+nQwXfcCOdY8TCsPs8vH0s8i5F2VzeqIEQhYYmvokinyibg4vQvQW8QIg==
+
 "@typescript-eslint/eslint-plugin@^6.7.5":
   version "6.7.5"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-6.7.5.tgz#f4024b9f63593d0c2b5bd6e4ca027e6f30934d4f"
