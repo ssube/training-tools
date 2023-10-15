@@ -6,6 +6,7 @@ import { useDrag } from 'react-dnd';
 import { DRAG_TYPES } from '../../drag.js';
 
 export interface DragTagProps {
+  banned: boolean;
   label: string;
   value: string;
 
@@ -25,8 +26,8 @@ export function DragTag(props: DragTagProps) {
   }
 
   if (doesExist(props.onDelete)) {
-    return <Chip ref={drag} label={props.label} onDelete={handleDelete} />;
+    return <Chip color={props.banned && 'warning' || 'default'} ref={drag} label={props.label} onDelete={handleDelete} />;
   } else {
-    return <Chip ref={drag} label={props.label} />;
+    return <Chip color={props.banned && 'warning' || 'default'} ref={drag} label={props.label} />;
   }
 }

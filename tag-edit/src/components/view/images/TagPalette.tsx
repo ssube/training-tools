@@ -10,7 +10,7 @@ import { DragTag } from './DragTag.js';
 
 export function TagPalette() {
   const state = useContext(StateContext);
-  const tags = useStore(mustExist(state), useShallow((s) => s.tags.sort()));
+  const tags = useStore(mustExist(state), useShallow((s) => s.tags.known.sort()));
 
   return <Paper>
     <Stack direction='column'>
@@ -20,7 +20,7 @@ export function TagPalette() {
       <Virtuoso
         style={{ height: 1000, width: 300 }}
         data={tags}
-        itemContent={(_index, tag) => <DragTag label={tag} value={tag} />}
+        itemContent={(_index, tag) => <DragTag banned={false} label={tag} value={tag} />}
       />
     </Stack>
   </Paper>;

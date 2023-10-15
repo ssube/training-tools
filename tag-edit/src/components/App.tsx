@@ -4,7 +4,7 @@ import { Box, Button, Tab } from '@mui/material';
 import React, { useContext, useState } from 'react';
 import { useStore } from 'zustand';
 
-import { Images, StateContext } from '../state.js';
+import { Images, StateContext, Tags } from '../state.js';
 import { ImagesTab } from './view/images/Tab.js';
 import { StatsTab } from './view/stats/Tab.js';
 
@@ -18,11 +18,11 @@ export function App() {
   const [tab, setTab] = useState('image');
 
   async function load() {
-    const {images, tags} = await openDirectory();
+    const { images, tags } = await openDirectory();
     loadImages(images);
 
-    const imageTags = gatherTags(images);
-    setTags([...tags, ...imageTags]);
+    const allTags = gatherTags(images, tags);
+    setTags(allTags);
   }
 
   return <Box sx={{ width: '100%' }}>
@@ -45,7 +45,7 @@ export function App() {
   </Box>;
 }
 
-export async function openDirectory(): Promise<{images: Images, tags: Array<string>}> {
+export async function openDirectory(): Promise<{ images: Images, tags: Array<string> }> {
   const handle = await window.showDirectoryPicker();
   console.log('loading from', handle.name);
 
@@ -66,15 +66,14 @@ export async function openDirectory(): Promise<{images: Images, tags: Array<stri
 
       if (value.name === 'tags.txt') {
         const file = await value.getFile();
-        const text = await file.text();
-        tags.push(...text.split(',').map(it => it.trim()));
+        const data = await readCaption(file);
+        tags.push(...data);
         continue;
       }
 
       if (isCaption(ext)) {
         const file = await value.getFile();
-        const text = await file.text();
-        captions[name] = text.split(',').map(it => it.trim());
+        captions[name] = await readCaption(file);
         continue;
       }
     }
@@ -108,14 +107,43 @@ export function isCaption(name: string): boolean {
   return ['caption', 'txt'].includes(name);
 }
 
-export function gatherTags(images: Images): Array<string> {
-  const tags = new Set<string>();
+export function gatherTags(images: Images, preknown: Array<string>): Tags {
+  const banned = new Set<string>();
+  const known = new Set<string>();
 
-  for (const [name, value] of Object.entries(images)) {
-    for (const tag of value.captions) {
-      tags.add(tag);
+  for (const tag of preknown) {
+    if (tag.startsWith('*') && tag.length > 1) {
+      banned.add(tag.substring(1));
+      continue;
+    }
+
+    if (tag.length > 0) {
+      known.add(tag);
+      continue;
     }
   }
 
-  return Array.from(tags);
+  for (const [_name, value] of Object.entries(images)) {
+    for (const tag of value.captions) {
+      if (tag.startsWith('*') && tag.length > 1) {
+        banned.add(tag.substring(1));
+        continue;
+      }
+
+      if (tag.length > 0) {
+        known.add(tag);
+        continue;
+      }
+    }
+  }
+
+  return {
+    banned: Array.from(banned),
+    known: Array.from(known),
+  };
+}
+
+export async function readCaption(file: File): Promise<Array<string>> {
+  const text = await file.text();
+  return text.split('\n').flatMap(line => line.split(',')).map(it => it.trim());
 }

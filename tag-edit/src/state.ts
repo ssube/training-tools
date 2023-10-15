@@ -15,23 +15,31 @@ export interface Images {
   };
 }
 
+export interface Tags {
+  banned: Array<string>;
+  known: Array<string>;
+}
+
 export interface AppState {
   dirty: boolean;
   images: Images;
-  tags: Array<string>;
+  tags: Tags;
 
   loadImages(images: Images): void;
 
   setCaptions(name: string, tags: Array<string>): void;
   setDirty(dirty?: boolean): void;
-  setTags(tags: Array<string>): void;
+  setTags(tags: Partial<Tags>): void;
 }
 
 export function createStateSlices() {
   const appSlice: Slice<AppState> = (set) => ({
     dirty: false,
     images: {},
-    tags: [],
+    tags: {
+      banned: [],
+      known: [],
+    },
     loadImages(images) {
       set((prev) => ({
         ...prev,
@@ -63,7 +71,10 @@ export function createStateSlices() {
     setTags(tags) {
       set((prev) => ({
         ...prev,
-        tags,
+        tags: {
+          ...prev.tags,
+          ...tags,
+        },
       }));
     },
   });

@@ -14,6 +14,7 @@ export interface ImageCardProps {
 
 export function ImageCard(props: ImageCardProps) {
   const state = useContext(StateContext);
+  const banned = useStore(mustExist(state), (s) => s.tags.banned);
   const image = useStore(mustExist(state), (s) => s.images[props.name]);
 
   const setCaptions = useStore(mustExist(state), (s) => s.setCaptions);
@@ -41,11 +42,11 @@ export function ImageCard(props: ImageCardProps) {
 
   const url = useMemo(() => URL.createObjectURL(mustExist(image.image)), [mustExist(image.image).name]);
 
-  const tags = image.captions.map(tag => <DragTag label={tag} value={tag} onDelete={removeTag} />);
+  const tags = image.captions.map(tag => <DragTag banned={banned.includes(tag)} label={tag} value={tag} onDelete={removeTag} />);
 
-  return <Card ref={drop} sx={{ maxWidth: 345 }}>
+  return <Card ref={drop} sx={{ maxWidth: 500 }}>
     {doesExist(image.image) && <CardMedia
-      sx={{ height: 140 }}
+      sx={{ height: 250 }}
       image={url}
       title={props.name}
     />}
@@ -60,8 +61,8 @@ export function ImageCard(props: ImageCardProps) {
       </Box>
     </CardContent>
     <CardActions>
-      <Button size='small'>Crop</Button>
-      <Button size='small'>Delete</Button>
+      <Button size='small' disabled>Crop</Button>
+      <Button size='small' disabled>Delete</Button>
     </CardActions>
   </Card>;
 }

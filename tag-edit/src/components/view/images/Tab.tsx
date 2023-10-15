@@ -13,8 +13,8 @@ import { ImageCard } from './ImageCard.js';
 import { TagPalette } from './TagPalette.js';
 
 const ItemContainer = styled.div`
-  padding: 0.5rem;
-  width: 33%;
+  padding: 1rem;
+  width: 30%;
   display: flex;
   flex: none;
   align-content: stretch;
@@ -31,9 +31,6 @@ const ItemContainer = styled.div`
 
 const ItemWrapper = styled.div`
   flex: 1;
-  text-align: center;
-  font-size: 80%;
-  padding: 1rem 1rem;
   border: 1px solid var(gray);
   white-space: nowrap;
 `;
