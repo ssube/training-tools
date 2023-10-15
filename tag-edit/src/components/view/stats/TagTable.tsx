@@ -3,24 +3,43 @@ import React, { useContext } from 'react';
 import { useStore } from 'zustand';
 
 import { Images, StateContext } from '../../../state.js';
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Button } from '@mui/material';
+import { Delete } from '@mui/icons-material';
 
 export function TagTable() {
   const state = useContext(StateContext);
   const images = useStore(mustExist(state), (s) => s.images);
+  const removeTag = useStore(mustExist(state), (s) => s.removeTag);
+
   const stats = tagStats(images);
   const rows = Object.entries(stats.count)
     .sort((a, b) => b[1] - a[1])
-    .map(([name, count]) => <tr>
-      <td>{name}</td>
-      <td>{count}</td>
-      <td>{(count * 100 / stats.total).toFixed(2)}%</td>
-    </tr>);
+    .map(([name, count]) => <TableRow>
+      <TableCell>{name}</TableCell>
+      <TableCell align='right'>{count}</TableCell>
+      <TableCell align='right'>{(count * 100 / stats.total).toFixed(2)}%</TableCell>
+      <TableCell align='right'>
+        <IconButton onClick={() => removeTag(name)}>
+          <Delete />
+        </IconButton>
+      </TableCell>
+    </TableRow>);
 
-  return <table>
-    <tbody>
-      {...rows}
-    </tbody>
-  </table>
+  return <TableContainer component={Paper}>
+    <Table sx={{ minWidth: 650 }}>
+      <TableHead>
+        <TableRow>
+          <TableCell>Tag</TableCell>
+          <TableCell align='right'>Count</TableCell>
+          <TableCell align='right'>Frequency</TableCell>
+          <TableCell align='right'>Actions</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {...rows}
+      </TableBody>
+    </Table>
+  </TableContainer>;
 }
 
 interface TagStats {

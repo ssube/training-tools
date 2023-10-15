@@ -13,7 +13,7 @@ export function App() {
   const dirty = useStore(mustExist(state), (s) => s.dirty)
   const loadImages = useStore(mustExist(state), (s) => s.loadImages);
   const setDirty = useStore(mustExist(state), (s) => s.setDirty);
-  const setTags = useStore(mustExist(state), (s) => s.setTags);
+  const setTags = useStore(mustExist(state), (s) => s.loadTags);
 
   const [tab, setTab] = useState('image');
 

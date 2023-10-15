@@ -26,10 +26,11 @@ export interface AppState {
   tags: Tags;
 
   loadImages(images: Images): void;
+  loadTags(tags: Partial<Tags>): void;
 
+  removeTag(tag: string): void;
   setCaptions(name: string, tags: Array<string>): void;
   setDirty(dirty?: boolean): void;
-  setTags(tags: Partial<Tags>): void;
 }
 
 export function createStateSlices() {
@@ -45,6 +46,27 @@ export function createStateSlices() {
         ...prev,
         images,
       }));
+    },
+    loadTags(tags) {
+      set((prev) => ({
+        ...prev,
+        tags: {
+          ...prev.tags,
+          ...tags,
+        },
+      }));
+    },
+    removeTag(tag) {
+      set((prev) => {
+        const imageEntries = Object.entries(prev.images).map(([name, image]) => [name, {
+          ...image,
+          captions: image.captions.filter(it => it !== tag),
+        }]);
+        return {
+          ...prev,
+          images: Object.fromEntries(imageEntries),
+        };
+      });
     },
     setCaptions(name, captions) {
       set((prev) => {
@@ -66,15 +88,6 @@ export function createStateSlices() {
       set((prev) => ({
         ...prev,
         dirty,
-      }));
-    },
-    setTags(tags) {
-      set((prev) => ({
-        ...prev,
-        tags: {
-          ...prev.tags,
-          ...tags,
-        },
       }));
     },
   });
