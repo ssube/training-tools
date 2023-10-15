@@ -7,13 +7,14 @@ import { useStore } from 'zustand';
 import { StateContext } from '../../../state.js';
 import { ImageCard } from './ImageCard.js';
 import { TagPalette } from './TagPalette.js';
+import { useShallow } from 'zustand/react/shallow';
 
 export function ImageTab() {
   const state = useContext(StateContext);
-  const images = useStore(mustExist(state), (s) => s.images);
+  const images = useStore(mustExist(state), useShallow((s) => Object.keys(s.images)));
 
   /* for each image in the directory, show a card */
-  const cards = Object.entries(images).map(([name, value]) => <Grid item><ImageCard name={name} tags={value.captions} image={value.image} /></Grid>);
+  const cards = images.map(name => <Grid item><ImageCard name={name} /></Grid>);
 
   return <DndProvider backend={HTML5Backend}>
     <Stack direction='row'>

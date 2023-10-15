@@ -8,26 +8,26 @@ import { doesExist, mustExist } from '@apextoaster/js-utils';
 import { StateContext } from '../../../state.js';
 
 export interface ImageCardProps {
-  image?: File;
   name: string;
-  tags: Array<string>;
 }
 
 export function ImageCard(props: ImageCardProps) {
   const state = useContext(StateContext);
+  const image = useStore(mustExist(state), (s) => s.images[props.name]);
+
   const setCaptions = useStore(mustExist(state), (s) => s.setCaptions);
 
   function addTag(tag: DragTagProps) {
     console.log('adding dropped tag', tag);
     setCaptions(props.name, dedupe([
-      ...props.tags,
+      ...image.captions,
       tag.value,
     ]));
   }
 
   function removeTag(tag: DragTagProps) {
     console.log('remove dropped tag', tag);
-    setCaptions(props.name, props.tags.filter(it => it !== tag.value));
+    setCaptions(props.name, image.captions.filter(it => it !== tag.value));
   }
 
   const [, drop] = useDrop(
@@ -35,15 +35,15 @@ export function ImageCard(props: ImageCardProps) {
       accept: DRAG_TYPES.Tag,
       drop: addTag,
     }),
-    [props.tags],
+    [image.captions],
   );
 
-  const url = useMemo(() => URL.createObjectURL(mustExist(props.image)), [mustExist(props.image).name]);
+  const url = useMemo(() => URL.createObjectURL(mustExist(image.image)), [mustExist(image.image).name]);
 
-  const tags = props.tags.map(tag => <DragTag label={tag} value={tag} onDelete={removeTag} />);
+  const tags = image.captions.map(tag => <DragTag label={tag} value={tag} onDelete={removeTag} />);
 
   return <Card ref={drop} sx={{ maxWidth: 345 }}>
-    {doesExist(props.image) && <CardMedia
+    {doesExist(image.image) && <CardMedia
       sx={{ height: 140 }}
       image={url}
       title={props.name}
