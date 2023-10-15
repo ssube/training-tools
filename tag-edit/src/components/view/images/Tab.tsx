@@ -43,7 +43,7 @@ const ListContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-export function ImageTab() {
+export function ImagesTab() {
   const state = useContext(StateContext);
   const images = useStore(mustExist(state), useShallow((s) => Object.keys(s.images)));
 

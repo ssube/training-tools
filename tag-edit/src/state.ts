@@ -1,7 +1,7 @@
 import { Maybe } from '@apextoaster/js-utils';
 import { Logger } from 'noicejs';
 import { createContext } from 'react';
-import { StoreApi, StateCreator } from 'zustand';
+import { StateCreator, StoreApi } from 'zustand';
 
 /**
  * Shorthand for state creator to reduce repeated arguments.

@@ -1,12 +1,12 @@
 import { mustExist } from '@apextoaster/js-utils';
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import React, { useContext } from 'react';
+import { Virtuoso } from 'react-virtuoso';
 import { useStore } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
 
 import { StateContext } from '../../../state.js';
 import { DragTag } from './DragTag.js';
-import { Virtuoso } from 'react-virtuoso';
-import { useShallow } from 'zustand/react/shallow';
 
 export function TagPalette() {
   const state = useContext(StateContext);

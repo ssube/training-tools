@@ -9,7 +9,6 @@ import { createStore } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { App } from './components/App.js';
-
 import {
   AppState,
   createStateSlices,

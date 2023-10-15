@@ -3,9 +3,10 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Box, Button, Tab } from '@mui/material';
 import React, { useContext, useState } from 'react';
 import { useStore } from 'zustand';
-import { Images, StateContext } from '../state';
-import { AllTab } from './view/all/Tab';
-import { ImageTab } from './view/image/Tab';
+
+import { Images, StateContext } from '../state.js';
+import { ImagesTab } from './view/images/Tab.js';
+import { StatsTab } from './view/stats/Tab.js';
 
 export function App() {
   const state = useContext(StateContext);
@@ -35,10 +36,10 @@ export function App() {
         </TabList>
       </Box>
       <TabPanel value='image'>
-        <ImageTab />
+        <ImagesTab />
       </TabPanel>
       <TabPanel value='all'>
-        <AllTab />
+        <StatsTab />
       </TabPanel>
     </TabContext>
   </Box>;
