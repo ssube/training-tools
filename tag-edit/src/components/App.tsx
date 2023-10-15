@@ -17,11 +17,11 @@ export function App() {
   const [tab, setTab] = useState('image');
 
   async function load() {
-    const images = await openDirectory();
+    const {images, tags} = await openDirectory();
     loadImages(images);
 
-    const tags = gatherTags(images);
-    setTags(tags);
+    const imageTags = gatherTags(images);
+    setTags([...tags, ...imageTags]);
   }
 
   return <Box sx={{ width: '100%' }}>
@@ -44,26 +44,37 @@ export function App() {
   </Box>;
 }
 
-export async function openDirectory(): Promise<Images> {
+export async function openDirectory(): Promise<{images: Images, tags: Array<string>}> {
   const handle = await window.showDirectoryPicker();
   console.log('loading from', handle.name);
 
   const images: Record<string, File> = {};
   const captions: Record<string, Array<string>> = {};
+  const tags: Array<string> = [];
 
   for await (const [key, value] of handle.entries()) {
     console.log({ key, value, handle });
 
     if (value.kind === 'file') {
       const [name, ext] = value.name.split('.');
+
       if (isImage(ext)) {
         images[name] = await value.getFile();
+        continue;
+      }
+
+      if (value.name === 'tags.txt') {
+        const file = await value.getFile();
+        const text = await file.text();
+        tags.push(...text.split(',').map(it => it.trim()));
+        continue;
       }
 
       if (isCaption(ext)) {
         const file = await value.getFile();
         const text = await file.text();
         captions[name] = text.split(',').map(it => it.trim());
+        continue;
       }
     }
   }
@@ -82,7 +93,10 @@ export async function openDirectory(): Promise<Images> {
     }
   }
 
-  return results;
+  return {
+    images: results,
+    tags,
+  };
 }
 
 export function isImage(name: string): boolean {
