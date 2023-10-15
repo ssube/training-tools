@@ -12,17 +12,26 @@ export function App() {
   const state = useContext(StateContext);
   const dirty = useStore(mustExist(state), (s) => s.dirty)
   const loadImages = useStore(mustExist(state), (s) => s.loadImages);
+  const loadTags = useStore(mustExist(state), (s) => s.loadTags);
   const setDirty = useStore(mustExist(state), (s) => s.setDirty);
-  const setTags = useStore(mustExist(state), (s) => s.loadTags);
 
   const [tab, setTab] = useState('image');
 
   async function load() {
-    const { images, tags } = await openDirectory();
+    const { images, tags } = await loadDirectory();
     loadImages(images);
 
     const allTags = gatherTags(images, tags);
-    setTags(allTags);
+    loadTags(allTags);
+  }
+
+  async function save() {
+    const store = mustExist(state);
+    // should not be a useStore, because we don't want to render the whole app with every change
+    const { images } = store.getState();
+    const dirty = await saveDirectory(images);
+    setDirty(dirty);
+    // TODO: show toast
   }
 
   return <Box sx={{ width: '100%' }}>
@@ -31,8 +40,8 @@ export function App() {
         <TabList onChange={(_e, key) => setTab(key)}>
           <Tab value='image' label='Caption Editor' />
           <Tab value='all' label='Tag Stats' />
-          <Button onClick={load}>Open</Button>
-          {dirty && <Button onClick={() => setDirty(false)}>Save</Button>}
+          <Button onClick={load}>Load</Button>
+          {dirty && <Button onClick={save}>Save</Button>}
         </TabList>
       </Box>
       <TabPanel value='image'>
@@ -45,7 +54,7 @@ export function App() {
   </Box>;
 }
 
-export async function openDirectory(): Promise<{ images: Images, tags: Array<string> }> {
+export async function loadDirectory(): Promise<{ images: Images, tags: Array<string> }> {
   const handle = await window.showDirectoryPicker();
   console.log('loading from', handle.name);
 
@@ -97,6 +106,29 @@ export async function openDirectory(): Promise<{ images: Images, tags: Array<str
     images: results,
     tags,
   };
+}
+
+export async function saveDirectory(images: Images): Promise<boolean> {
+  const handle = await window.showDirectoryPicker({
+    mode: 'readwrite',
+  });
+  console.log('saving to', handle.name);
+
+  for (const [name, value] of Object.entries(images)) {
+    const captionName = `${name}.txt`;
+    const caption = value.captions.join(', ');
+    console.log(`TODO: save ${caption} to ${captionName}`);
+
+    const file = await handle.getFileHandle(captionName, {
+      create: true,
+    });
+    const writer = await file.createWritable({});
+    await writer.write(caption);
+    await writer.close();
+  }
+
+  // if saving succeeded, this is always false
+  return false;
 }
 
 export function isImage(name: string): boolean {
