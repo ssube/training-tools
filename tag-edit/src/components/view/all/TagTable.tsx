@@ -10,7 +10,9 @@ export function TagTable() {
   const rows = Object.entries(stats.count)
     .sort((a, b) => b[1] - a[1])
     .map(([name, count]) => <tr>
-      <td>{name}: {count} ({(count * 100 / stats.total).toFixed(2)}%)</td>
+      <td>{name}</td>
+      <td>{count}</td>
+      <td>{(count * 100 / stats.total).toFixed(2)}%</td>
     </tr>);
 
   return <table>
