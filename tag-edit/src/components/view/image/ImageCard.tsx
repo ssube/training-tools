@@ -1,11 +1,12 @@
+import { doesExist, mustExist } from '@apextoaster/js-utils';
 import { Box, Button, Card, CardActions, CardContent, CardMedia, Typography } from '@mui/material';
 import React, { useContext, useMemo } from 'react';
-import { DragTag, DragTagProps } from './DragTag';
-import { DRAG_TYPES } from '../../drag';
 import { useDrop } from 'react-dnd';
 import { useStore } from 'zustand';
-import { doesExist, mustExist } from '@apextoaster/js-utils';
+
 import { StateContext } from '../../../state.js';
+import { DRAG_TYPES } from '../../drag.js';
+import { DragTag, DragTagProps } from './DragTag.js';
 
 export interface ImageCardProps {
   name: string;
@@ -54,13 +55,13 @@ export function ImageCard(props: ImageCardProps) {
           {props.name}
         </Typography>
       </Box>
-      <Box>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
         {...tags}
       </Box>
     </CardContent>
     <CardActions>
-      <Button size='small'>Share</Button>
-      <Button size='small'>Learn More</Button>
+      <Button size='small'>Crop</Button>
+      <Button size='small'>Delete</Button>
     </CardActions>
   </Card>;
 }

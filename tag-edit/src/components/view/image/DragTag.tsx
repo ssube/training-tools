@@ -1,9 +1,8 @@
-import { Box, Button, IconButton } from '@mui/material';
+import { doesExist } from '@apextoaster/js-utils';
+import { Chip } from '@mui/material';
 import React from 'react';
 import { useDrag } from 'react-dnd';
 import { DRAG_TYPES } from '../../drag.js';
-import { Delete } from '@mui/icons-material';
-import { doesExist } from '@apextoaster/js-utils';
 
 export interface DragTagProps {
   label: string;
@@ -18,14 +17,15 @@ export function DragTag(props: DragTagProps) {
     type: DRAG_TYPES.Tag,
   }));
 
-  return <Box>
-    <Button ref={drag}>{props.label}</Button>
-    {doesExist(props.onDelete) &&
-    <IconButton aria-label='delete' size='small' onClick={() => {
-      if (doesExist(props.onDelete)) {
-          props.onDelete(props);
-      }}}>
-      <Delete fontSize='inherit' />
-    </IconButton>}
-  </Box>;
+  function handleDelete() {
+    if (doesExist(props.onDelete)) {
+        props.onDelete(props);
+    }
+  }
+
+  if (doesExist(props.onDelete)) {
+    return <Chip ref={drag} label={props.label} onDelete={handleDelete} />;
+  } else {
+    return <Chip ref={drag} label={props.label} />;
+  }
 }

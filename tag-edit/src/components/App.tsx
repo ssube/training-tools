@@ -28,8 +28,8 @@ export function App() {
     <TabContext value={tab}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <TabList onChange={(_e, key) => setTab(key)}>
-          <Tab value='image' label='Image Tags' />
-          <Tab value='all' label='All Tags' />
+          <Tab value='image' label='Caption Editor' />
+          <Tab value='all' label='Tag Stats' />
           <Button onClick={load}>Open</Button>
           {dirty && <Button onClick={() => setDirty(false)}>Save</Button>}
         </TabList>
