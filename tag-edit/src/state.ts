@@ -8,13 +8,13 @@ import { StateCreator, StoreApi } from 'zustand';
  */
 export type Slice<T> = StateCreator<AppState, [], [], T>;
 
-export interface ImageData {
+export interface ImageCaption {
   captions: Array<string>;
   image?: File;
 }
 
 export interface Images {
-  [key: string]: ImageData;
+  [key: string]: ImageCaption;
 }
 
 export interface Tags {
