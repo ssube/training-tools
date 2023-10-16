@@ -93,13 +93,11 @@ export async function loadDirectory(): Promise<{ images: Images, tags: Array<str
   const results: Images = {};
 
   for (const [name, image] of Object.entries(images)) {
-    const tags = captions[name];
-    if (doesExist(tags)) {
-      results[name] = {
-        captions: tags,
-        image,
-      };
-    }
+    const tags = captions[name] || [];
+    results[name] = {
+      captions: tags,
+      image,
+    };
   }
 
   return {
