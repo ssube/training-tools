@@ -50039,33 +50039,38 @@ Please use another name.` : formatMuiErrorMessage(18));
 
   // out/src/components/view/images/ImageCard.js
   function ImageCard(props) {
+    var _a;
     const state = (0, import_react38.useContext)(StateContext);
     const banned = useStore(mustExist(state), (s) => s.tags.banned);
     const image = useStore(mustExist(state), (s) => s.images[props.name]);
     const setCaptions = useStore(mustExist(state), (s) => s.setCaptions);
     function addTag(tag) {
       console.log("adding dropped tag", tag);
-      setCaptions(props.name, dedupe([
-        ...image.captions,
-        tag.value
-      ]));
+      if (doesExist2(image)) {
+        setCaptions(props.name, dedupe([
+          ...image.captions,
+          tag.value
+        ]));
+      }
     }
     __name(addTag, "addTag");
     function removeTag(tag) {
       console.log("remove dropped tag", tag);
-      setCaptions(props.name, image.captions.filter((it) => it !== tag.value));
+      if (doesExist2(image)) {
+        setCaptions(props.name, image.captions.filter((it) => it !== tag.value));
+      }
     }
     __name(removeTag, "removeTag");
     const [, drop] = useDrop(() => ({
       accept: DRAG_TYPES.Tag,
       drop: addTag
-    }), [image.captions]);
-    const url = (0, import_react38.useMemo)(() => URL.createObjectURL(mustExist(image.image)), [mustExist(image.image).name]);
-    const tags2 = image.captions.map((tag) => import_react38.default.createElement(DragTag, { banned: banned.includes(tag), label: tag, value: tag, onDelete: removeTag }));
+    }), [image === null || image === void 0 ? void 0 : image.captions]);
+    const url = (0, import_react38.useMemo)(() => URL.createObjectURL((image === null || image === void 0 ? void 0 : image.image) || new Blob()), [(_a = image === null || image === void 0 ? void 0 : image.image) === null || _a === void 0 ? void 0 : _a.name]);
+    const tags2 = (image === null || image === void 0 ? void 0 : image.captions.map((tag) => import_react38.default.createElement(DragTag, { banned: banned.includes(tag), label: tag, value: tag, onDelete: removeTag }))) || [];
     return import_react38.default.createElement(
       Card_default,
       { ref: drop, sx: { maxWidth: 500 } },
-      doesExist2(image.image) && import_react38.default.createElement(CardMedia_default, { sx: { height: 250 }, image: url, title: props.name }),
+      import_react38.default.createElement(CardMedia_default, { sx: { height: 250 }, image: url, title: props.name }),
       import_react38.default.createElement(
         CardContent_default,
         null,
@@ -50357,13 +50362,11 @@ Please use another name.` : formatMuiErrorMessage(18));
     console.log(captions, images);
     const results = {};
     for (const [name, image] of Object.entries(images)) {
-      const tags3 = captions[name];
-      if (doesExist2(tags3)) {
-        results[name] = {
-          captions: tags3,
-          image
-        };
-      }
+      const tags3 = captions[name] || [];
+      results[name] = {
+        captions: tags3,
+        image
+      };
     }
     return {
       images: results,
@@ -50383,7 +50386,9 @@ Please use another name.` : formatMuiErrorMessage(18));
       const file = await handle.getFileHandle(captionName, {
         create: true
       });
-      const writer = await file.createWritable({});
+      const writer = await file.createWritable({
+        keepExistingData: false
+      });
       await writer.write(caption);
       await writer.close();
     }
